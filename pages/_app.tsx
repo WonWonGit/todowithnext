@@ -4,6 +4,7 @@ import RootStore from "@/mobx/RootStore";
 import App from "next/app";
 import {Provider} from "mobx-react";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
 interface State{
     store: RootStore;

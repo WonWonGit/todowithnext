@@ -15,9 +15,10 @@ const Home: NextPage = (props:any) => {
   const todoStore : TodoStore = rootStore.todoStore;
 
   const[todoInput, setTodoInput] = useState({id:0, todo:'', done:'N'});
-  const[hide, setHide] = useState('N');
+  const[hides, setHides] = useState({id:0, hide:'N'});
   const[hideInput, setHideInput] = useState('');
   const {todo} = todoInput;
+  const {id, hide} = hides;
 
 
   const getTodoDTOList = async () => {
@@ -54,8 +55,13 @@ const Home: NextPage = (props:any) => {
   }
 
   const handleHide = (hide:string,todo:any) => {
-    setHide(hide);
-    setHideInput(todo);
+    const setHide = {
+      ...hides,
+      id:todo.id,
+      hide:hide
+    }
+    setHides(setHide)
+    setHideInput(todo.todo);
   }
 
   const empty = (e:any) => {
@@ -81,36 +87,69 @@ const Home: NextPage = (props:any) => {
 
       return (
       <div
-          className="container"
-          // className={styles.container}
+          className="container-fluid w-100"
+          style={{ background: "#f2f1eb" }}
       >
-        <div className="row">
-        <div className="col">
+        <div className="row vh-100">
+        <div className="col  mt-5">
+          <div className="card shadow p-3 mb-5 bg-body rounded">
+            <div className="card-header">
+              <h3>TODO LIST</h3>
           <div className="input-group">
           <input className="form-control col-xs-3" name="todo" value={todo} onChange={change}/>
-          <button onClick={()=>{buttonClick('post',0)}} className="btn btn-sm btn-outline-secondary">저장</button>
+          <button onClick={()=>{buttonClick('post',0)}} className="btn btn-sm btn-outline-secondary">SAVE</button>
           </div>
-          <ul>
+            </div>
+          <ul className="list-group  list-group-flush">
             {todoStore.todoDTOList != null && todoStore.todoDTOList.map((todoDTO:TodoDTO) => (
-                <li key={todoDTO.id}>{todoDTO.todo}<button className="btn btn-sm" onClick={()=>{buttonClick('updateDone',todoDTO)}}>완료</button>
-                  { hide == 'N' ?
-                      <button className="btn" onClick={()=>{handleHide('Y',todoDTO.todo)}}>수정</button> :
-                      <div>
-                        <input className="updateInput"  onFocus={empty} key={todoDTO.id} value={hideInput} onChange={hideInputChange}/>
-                        <button className="btn btn-sm" onClick={()=>{handleHide('N',''); buttonClick('update',todoDTO)}}>수정완료</button>
+                <li className="list-group-item d-flex justify-content-between" key={todoDTO.id}>
+                  <div className="w-100">
+                    {todoDTO.todo}
+                  </div>
+                  { hide == 'N'?
+                      <div className="badge">
+                      <button className="btn btn-sm" onClick={()=>{buttonClick('updateDone',todoDTO)}}>
+                        <i className="bi bi-check-circle"></i>
+                      </button>
+                      <button className="btn btn-sm" onClick={()=>{handleHide('Y',todoDTO)}}>
+                        <i className="bi bi-pencil-square"></i>
+                      </button>
                       </div>
-                  }
+                      : id===todoDTO.id?
+                      <div className="w-100">
+                        <input className="updateInput"  onFocus={empty} key={todoDTO.id} value={hideInput} onChange={hideInputChange}/>
+                        <button className="btn btn-sm" onClick={()=>{handleHide('N',todoDTO); buttonClick('update',todoDTO)}}>
+                          <i className="bi bi-file-check"></i>
+                        </button>
+                        <button className="btn btn-sm" onClick={()=>{handleHide('N',todoDTO);}}>
+                          <i className="bi bi-x-circle-fill"></i>
+                        </button>
+                      </div> : null }
                 </li>
             ))}
           </ul>
+          </div>
         </div>
-        <div className="col">
-          <h3>완료</h3>
-          <ul>
+        <div className="col mt-5">
+          <div className="card shadow p-3 mb-5 bg-body rounded">
+          <div className="card-header">
+            <h3>DONE</h3>
+          </div>
+          <ul className="list-group  list-group-flush">
             {todoStore.todoDTOListDone != null && todoStore.todoDTOListDone.map((todoDTO:TodoDTO) => (
-                <li key={todoDTO.id}>{todoDTO.todo}<button className="btn" onClick={()=>{buttonClick('delete',todoDTO)}}>X</button></li>
+                <li className="list-group-item d-flex justify-content-between" key={todoDTO.id}>
+                  <div className="text-muted text-decoration-line-through">
+                    {todoDTO.todo}
+                  </div>
+                  <div className="badge">
+                    <button className="btn btn-sm" onClick={()=>{buttonClick('delete',todoDTO)}}>
+                      <i className="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </li>
             ))}
           </ul>
+          </div>
         </div>
         </div>
       </div>
