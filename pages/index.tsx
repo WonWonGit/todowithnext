@@ -8,6 +8,11 @@ import TodoStore from "@/mobx/commonStore/TodoStore";
 import TodoDTO from "@/mobx/commonDTO/TodoDTO";
 import React, {useEffect, useState} from "react";
 import {any, string} from "prop-types";
+import Header from "@/components/Header";
+import Wrap from "@/components/Wrap";
+import {reset} from "@/styles/reset";
+import {admin} from "@/styles/admin";
+import {AdminContent} from "@/components/AdminContent";
 
 const Home: NextPage = (props:any) => {
 
@@ -64,10 +69,6 @@ const Home: NextPage = (props:any) => {
     setHideInput(todo.todo);
   }
 
-  const empty = (e:any) => {
-    setHideInput('');
-  }
-
   const hideInputChange = (e:any) => {
     setHideInput(e.target.value);
   }
@@ -86,73 +87,78 @@ const Home: NextPage = (props:any) => {
 
 
       return (
-      <div
-          className="container-fluid w-100"
-          style={{ background: "#f2f1eb" }}
-      >
-        <div className="row vh-100">
-        <div className="col  mt-5">
-          <div className="card shadow p-3 mb-5 bg-body rounded">
-            <div className="card-header">
-              <h3>TODO LIST</h3>
-          <div className="input-group">
-          <input className="form-control col-xs-3" name="todo" value={todo} onChange={change}/>
-          <button onClick={()=>{buttonClick('post',0)}} className="btn btn-sm btn-outline-secondary">SAVE</button>
-          </div>
-            </div>
-          <ul className="list-group  list-group-flush">
-            {todoStore.todoDTOList != null && todoStore.todoDTOList.map((todoDTO:TodoDTO) => (
-                <li className="list-group-item d-flex justify-content-between" key={todoDTO.id}>
-                  <div className="w-100">
-                    {todoDTO.todo}
-                  </div>
-                  { hide == 'N'?
-                      <div className="badge">
-                      <button className="btn btn-sm" onClick={()=>{buttonClick('updateDone',todoDTO)}}>
-                        <i className="bi bi-check-circle"></i>
-                      </button>
-                      <button className="btn btn-sm" onClick={()=>{handleHide('Y',todoDTO)}}>
-                        <i className="bi bi-pencil-square"></i>
-                      </button>
-                      </div>
-                      : id===todoDTO.id?
-                      <div className="w-100">
-                        <input className="updateInput"  onFocus={empty} key={todoDTO.id} value={hideInput} onChange={hideInputChange}/>
-                        <button className="btn btn-sm" onClick={()=>{handleHide('N',todoDTO); buttonClick('update',todoDTO)}}>
-                          <i className="bi bi-file-check"></i>
-                        </button>
-                        <button className="btn btn-sm" onClick={()=>{handleHide('N',todoDTO);}}>
-                          <i className="bi bi-x-circle-fill"></i>
-                        </button>
-                      </div> : null }
-                </li>
-            ))}
-          </ul>
-          </div>
-        </div>
-        <div className="col mt-5">
-          <div className="card shadow p-3 mb-5 bg-body rounded">
-          <div className="card-header">
-            <h3>DONE</h3>
-          </div>
-          <ul className="list-group  list-group-flush">
-            {todoStore.todoDTOListDone != null && todoStore.todoDTOListDone.map((todoDTO:TodoDTO) => (
-                <li className="list-group-item d-flex justify-content-between" key={todoDTO.id}>
-                  <div className="text-muted text-decoration-line-through">
-                    {todoDTO.todo}
-                  </div>
-                  <div className="badge">
-                    <button className="btn btn-sm" onClick={()=>{buttonClick('delete',todoDTO)}}>
-                      <i className="bi bi-trash"></i>
-                    </button>
-                  </div>
-                </li>
-            ))}
-          </ul>
-          </div>
-        </div>
-        </div>
-      </div>
+          <>
+          <AdminContent />
+          </>
+
+      // <div
+      //     className="container-fluid w-100"
+      //     style={{ background: "#f2f1eb" }}
+      // >
+      //   <div className="row vh-100">
+      //   <div className="col  mt-5">
+      //     <div className="card shadow p-3 mb-5 bg-body rounded">
+      //       <div className="card-header">
+      //         <h3>TODO LIST</h3>
+      //     <div className="input-group">
+      //     <input className="form-control col-xs-3" name="todo" value={todo} onChange={change}/>
+      //     <button onClick={()=>{buttonClick('post',0)}} className="btn btn-sm btn-outline-secondary">SAVE</button>
+      //     </div>
+      //       </div>
+      //     <ul className="list-group  list-group-flush">
+      //       {todoStore.todoDTOList != null && todoStore.todoDTOList.map((todoDTO:TodoDTO) => (
+      //           <li className="list-group-item d-flex justify-content-between" key={todoDTO.id}>
+      //             <div className="w-100">
+      //               {todoDTO.todo}
+      //             </div>
+      //             { hide == 'N'?
+      //                 <div className="badge">
+      //                 <button className="btn btn-sm" onClick={()=>{buttonClick('updateDone',todoDTO)}}>
+      //                   <i className="bi bi-check-circle"></i>
+      //                 </button>
+      //                 <button className="btn btn-sm" onClick={()=>{handleHide('Y',todoDTO)}}>
+      //                   <i className="bi bi-pencil-square"></i>
+      //                 </button>
+      //                 </div>
+      //                 : id===todoDTO.id?
+      //                 <div className="w-100">
+      //                   <input className="updateInput"  key={todoDTO.id} value={hideInput} onChange={hideInputChange}/>
+      //                   <button className="btn btn-sm" onClick={()=>{handleHide('N',todoDTO); buttonClick('update',todoDTO)}}>
+      //                     <i className="bi bi-file-check"></i>
+      //                   </button>
+      //                   <button className="btn btn-sm" onClick={()=>{handleHide('N',todoDTO);}}>
+      //                     <i className="bi bi-x-circle-fill"></i>
+      //                   </button>
+      //                 </div> : null }
+      //           </li>
+      //       ))}
+      //     </ul>
+      //     </div>
+      //   </div>
+      //
+      //   <div className="col mt-5">
+      //     <div className="card shadow p-3 mb-5 bg-body rounded">
+      //     <div className="card-header">
+      //       <h3>DONE</h3>
+      //     </div>
+      //     <ul className="list-group  list-group-flush">
+      //       {todoStore.todoDTOListDone != null && todoStore.todoDTOListDone.map((todoDTO:TodoDTO) => (
+      //           <li className="list-group-item d-flex justify-content-between" key={todoDTO.id}>
+      //             <div className="text-muted text-decoration-line-through">
+      //               {todoDTO.todo}
+      //             </div>
+      //             <div className="badge">
+      //               <button className="btn btn-sm" onClick={()=>{buttonClick('delete',todoDTO)}}>
+      //                 <i className="bi bi-trash"></i>
+      //               </button>
+      //             </div>
+      //           </li>
+      //       ))}
+      //     </ul>
+      //     </div>
+      //   </div>
+      //   </div>
+      // </div>
       )
       }
 
