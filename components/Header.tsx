@@ -1,5 +1,6 @@
 import css from "styled-jsx/css";
 import {headerStyle} from "@/styles/headerStyle";
+import Image from "next/image";
 
 const Header = () => (
     <>
@@ -16,7 +17,9 @@ const Header = () => (
             <div className="header-bottom">
                 <div className="inner">
                     <h1 className="logo">
-                        <a href="#"></a>
+                        <a href="#">
+                            {/*<Image src="../public/img/logo.png" />*/}
+                        </a>
                     </h1>
                     <nav>
                         <ul className="nav-menu">

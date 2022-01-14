@@ -1,0 +1,34 @@
+{
+  "code": 200,
+  "message": "OK",
+  "content": [
+    {
+      "id": 0,
+      "nickname": "자두아이셔",
+      "title": "자두기부는요",
+      "createDate": "2020-01-13",
+      "answerYn": false
+    },
+    {
+      "id": 1,
+      "nickname": "자두아이셔",
+      "title": "기부에대해서",
+      "createDate": "2020-01-13",
+      "answerYn": true
+    },
+    {
+      "id": 2,
+      "nickname": "자두보단물복아닌가여",
+      "title": "기부있잖아요...",
+      "createDate": "2020-01-13",
+      "answerYn": false
+    },
+    {
+      "id": 3,
+      "nickname": "자두보단물복아닌가여",
+      "title": "내 재능에대해서 말하자면!!",
+      "createDate": "2020-01-13",
+      "answerYn": true
+    }
+  ]
+}

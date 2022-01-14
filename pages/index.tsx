@@ -1,94 +1,174 @@
 import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
 import {inject, observer} from "mobx-react";
 import RootStore from "@/mobx/RootStore";
 import TodoStore from "@/mobx/commonStore/TodoStore";
 import TodoDTO from "@/mobx/commonDTO/TodoDTO";
 import React, {useEffect, useState} from "react";
-import {any, string} from "prop-types";
-import Header from "@/components/Header";
-import Wrap from "@/components/Wrap";
-import {reset} from "@/styles/reset";
-import {admin} from "@/styles/admin";
 import {AdminContent} from "@/components/AdminContent";
+import {any, object} from "prop-types";
+import {file} from "@babel/types";
+import axios from "axios";
+import {createDeflateRaw} from "zlib";
 
 const Home: NextPage = (props:any) => {
 
   const rootStore : RootStore = props.rootStore;
   const todoStore : TodoStore = rootStore.todoStore;
 
-  const[todoInput, setTodoInput] = useState({id:0, todo:'', done:'N'});
-  const[hides, setHides] = useState({id:0, hide:'N'});
-  const[hideInput, setHideInput] = useState('');
-  const {todo} = todoInput;
-  const {id, hide} = hides;
+  // const[todoInput, setTodoInput] = useState({id:0, todo:'', done:'N'});
+  // const[hides, setHides] = useState({id:0, hide:'N'});
+  // const[hideInput, setHideInput] = useState('');
+  // const {todo} = todoInput;
+  // const {id, hide} = hides;
+  //
+  //
+  // const getTodoDTOList = async () => {
+  //    const axiosDTO = await todoStore.getTodoDTOList();
+  // }
+  //
+  // const buttonClick = async (status:any,todoDTO:any) => {
+  //   let result:string = '';
+  //   switch (status){
+  //     case 'post':
+  //       result = await todoStore.postTodoDTO(todoInput);
+  //       break;
+  //     case 'delete':
+  //       result = await todoStore.deleteTodoDTO(todoDTO.id);
+  //       break;
+  //     case 'updateDone':
+  //       todoDTO.done = "Y";
+  //       result = await todoStore.updateTodoDTO(todoDTO);
+  //       break;
+  //     case 'update':
+  //       todoDTO.todo = hideInput;
+  //       result = await todoStore.updateTodoDTO(todoDTO);
+  //       break;
+  //   }
+  //
+  //   if(result == "success"){
+  //     getTodoDTOList();
+  //     setTodoInput({id:0, todo:'', done:'N'});
+  //
+  //   }else {
+  //     alert("요청 실패");
+  //   }
+  //
+  // }
+  //
+  // const handleHide = (hide:string,todo:any) => {
+  //   const setHide = {
+  //     ...hides,
+  //     id:todo.id,
+  //     hide:hide
+  //   }
+  //   setHides(setHide)
+  //   setHideInput(todo.todo);
+  // }
+  //
+  // const hideInputChange = (e:any) => {
+  //   setHideInput(e.target.value);
+  // }
+  //
+  // useEffect(()=>{
+  //   getTodoDTOList();
+  // },[]);
+  //
+  // const change = (e:any) => {
+  //   const set = {
+  //     ...todoInput,
+  //     [e.target.name] : e.target.value
+  //   }
+  //   setTodoInput(set);
+  // }
+
+  const [imgBase64, setImgBase64] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [img, setImg] = useState([]);
+
+  const handleUpload = (e:any) => {
+      for(var i=0;i<e.target.files.length;i++){
+          if(e.target.files[i]){
+              let reader = new FileReader();
+              reader.readAsDataURL(e.target.files[i]);
+
+                  reader.onloadend = () => {
+                      const base64 = reader.result;
+                      // console.log(reader.result);
+
+                      if(base64){
+                          var base64Sub = base64.toString();
+                          //분기처리하기
+                          setImgBase64(imgBase64 => [...imgBase64,base64Sub]);
+                      }else{
+                          reader.readAsDataURL(e.target.files[i]);
+                      }
+                  }
 
 
-  const getTodoDTOList = async () => {
-     const axiosDTO = await todoStore.getTodoDTOList();
+              reader.onerror =(e:any) => {
+                  console.log(e);
+              }
+          }
+      }
+
   }
 
-  const buttonClick = async (status:any,todoDTO:any) => {
-    let result:string = '';
-    switch (status){
-      case 'post':
-        result = await todoStore.postTodoDTO(todoInput);
-        break;
-      case 'delete':
-        result = await todoStore.deleteTodoDTO(todoDTO.id);
-        break;
-      case 'updateDone':
-        todoDTO.done = "Y";
-        result = await todoStore.updateTodoDTO(todoDTO);
-        break;
-      case 'update':
-        todoDTO.todo = hideInput;
-        result = await todoStore.updateTodoDTO(todoDTO);
-        break;
-    }
 
-    if(result == "success"){
-      getTodoDTOList();
-      setTodoInput({id:0, todo:'', done:'N'});
+    // console.log(file);
+    // let reader = new FileReader();
+    // reader.readAsDataURL(file);
 
-    }else {
-      alert("요청 실패");
-    }
+    // reader.onloadend = () => {
+    //     const base64 = reader.result;
+    //     if(base64){
+    //         let base64Sub = base64.toString();
+    //         setImgBase64(base64Sub);
+    //         setImg(e.target.files[0]);
+    //         console.log(img[0]);
+    //     }
+    //
+    // }
 
-  }
 
-  const handleHide = (hide:string,todo:any) => {
-    const setHide = {
-      ...hides,
-      id:todo.id,
-      hide:hide
-    }
-    setHides(setHide)
-    setHideInput(todo.todo);
-  }
+  const writeBoard = async (e:any)=>{
+      e.preventDefault();
+      const form = new FormData();
+      form.append("file",img[0]);
 
-  const hideInputChange = (e:any) => {
-    setHideInput(e.target.value);
-  }
+      console.log(form);
 
-  useEffect(()=>{
-    getTodoDTOList();
-  },[]);
+      // await axios.post('http://localhost:3001/file',
+      //     {
+      //         "file": form
+      //     },{
+      //     headers:{
+      //         "Content-Type": `multipart/form-data;`,
+      //     }
+      // }).then(()=>{
+      //     console.log('성공');
+      // }
+      // )
 
-  const change = (e:any) => {
-    const set = {
-      ...todoInput,
-      [e.target.name] : e.target.value
-    }
-    setTodoInput(set);
   }
 
 
       return (
           <>
-          <AdminContent />
+            <form
+                encType="multipart/form-data"
+                // onSubmit={handleSubmit}
+            >
+              <input type="file" id="file" accept="image/*, application/pdf"
+                     multiple={true}
+               onChange={handleUpload}
+              />
+              <button onClick={writeBoard}></button>
+                {imgBase64.length != 0 && imgBase64.map((item:string)=>(
+                    console.log(imgBase64.length),
+                    <img src={item} key={item} height={200} width={200}/>
+                ))
+                }
+            </form>
           </>
 
       // <div
