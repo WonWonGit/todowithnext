@@ -6,6 +6,8 @@ import {Provider} from "mobx-react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import Wrap from "@/components/Wrap";
+import {NextRouter, useRouter} from "next/router";
+import {useEffect, useState} from "react";
 
 interface State{
     store: RootStore;
@@ -17,6 +19,7 @@ export default class MyApp extends App{
     }
 
     render(){
+
         const {Component, pageProps} = this.props;
         return(
             <>

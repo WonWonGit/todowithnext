@@ -4,16 +4,14 @@ import RootStore from "@/mobx/RootStore";
 import TodoStore from "@/mobx/commonStore/TodoStore";
 import TodoDTO from "@/mobx/commonDTO/TodoDTO";
 import React, {useEffect, useState} from "react";
-import {AdminContent} from "@/components/AdminContent";
-import {any, object} from "prop-types";
-import {file} from "@babel/types";
-import axios from "axios";
-import {createDeflateRaw} from "zlib";
+import FileStore from "@/mobx/commonStore/FileStore";
+import FileDTO from "@/mobx/commonDTO/FileDTO";
 
 const Home: NextPage = (props:any) => {
 
   const rootStore : RootStore = props.rootStore;
   const todoStore : TodoStore = rootStore.todoStore;
+  const fileStore : FileStore = rootStore.fileStore;
 
   // const[todoInput, setTodoInput] = useState({id:0, todo:'', done:'N'});
   // const[hides, setHides] = useState({id:0, hide:'N'});
@@ -79,55 +77,63 @@ const Home: NextPage = (props:any) => {
   //     [e.target.name] : e.target.value
   //   }
   //   setTodoInput(set);
-  // }
-
-  const [imgBase64, setImgBase64] = useState([]);
-  const [files, setFiles] = useState([]);
+  //
+  const [imgBase64, setImgBase64] = useState({url:'',name:'',type:''});
+  const [imgBase, setImgBase] = useState([] as any);
+  const [files, setFiles] = useState();
   const [img, setImg] = useState([]);
 
   const handleUpload = (e:any) => {
       for(var i=0;i<e.target.files.length;i++){
           if(e.target.files[i]){
-              let reader = new FileReader();
-              reader.readAsDataURL(e.target.files[i]);
+              console.log(e.target.files[i]);
+              if(e.target.files[i].type.match(`image/*`)){
+
+                  let reader = new FileReader();
+                  reader.readAsDataURL(e.target.files[i]);
 
                   reader.onloadend = () => {
-                      const base64 = reader.result;
+                      const base64= reader.result;
                       // console.log(reader.result);
 
                       if(base64){
                           var base64Sub = base64.toString();
-                          //분기처리하기
-                          setImgBase64(imgBase64 => [...imgBase64,base64Sub]);
+                          // setImgBase({
+                          //     id: imgBase64.id++,
+                          //     url:base64Sub
+                          // });
+                          fileStore.setFileList({
+                              url: base64Sub,
+                              name: e.target.files[i].name,
+                              type: e.target.files[i].type
+                          });
                       }else{
                           reader.readAsDataURL(e.target.files[i]);
                       }
+
                   }
-
-
-              reader.onerror =(e:any) => {
-                  console.log(e);
+              }else{
+                  console.log('이미지 아님');
+                  fileStore.setFileList({
+                      url: '',
+                      name: e.target.files[i].name,
+                      type: e.target.files[i].type
+                  });
               }
+
           }
       }
 
   }
 
+  const removeImg = (id:number) => {
+      imgBase.filter((item:any)=>{
+          if(item.id===id){
+              imgBase.pop();
 
-    // console.log(file);
-    // let reader = new FileReader();
-    // reader.readAsDataURL(file);
-
-    // reader.onloadend = () => {
-    //     const base64 = reader.result;
-    //     if(base64){
-    //         let base64Sub = base64.toString();
-    //         setImgBase64(base64Sub);
-    //         setImg(e.target.files[0]);
-    //         console.log(img[0]);
-    //     }
-    //
-    // }
+          }
+      })
+  }
 
 
   const writeBoard = async (e:any)=>{
@@ -152,6 +158,8 @@ const Home: NextPage = (props:any) => {
   }
 
 
+
+
       return (
           <>
             <form
@@ -163,12 +171,40 @@ const Home: NextPage = (props:any) => {
                onChange={handleUpload}
               />
               <button onClick={writeBoard}></button>
-                {imgBase64.length != 0 && imgBase64.map((item:string)=>(
-                    console.log(imgBase64.length),
-                    <img src={item} key={item} height={200} width={200}/>
-                ))
-                }
             </form>
+              <ul>
+              {fileStore.previewFile!=null &&
+                  fileStore.previewFile
+                      .map((previewFile:any) => {
+                          if(previewFile.type.includes('image/')){
+                              return (<img src={previewFile.url} key={previewFile.id} width={100} height={100} />)
+                          }else{
+                              return (<div key={previewFile.id} style={{width:100, height:100, backgroundColor:"gray"}}>{previewFile.name}</div>)
+                          }
+                      })
+                  // fileStore.previewFile.map((img:any)=>(
+                  // <img src={img.url} key={img.id} width={100} height={100} />
+              // ))
+              }
+              </ul>
+              {/*// map((file:FileDTO)=>(*/}
+              {/*//    <img src={file.url} key={file.id} alt="img" width={100} height={100} />*/}
+              {/*// ))*/}
+              {/*}*/}
+                {/*<ul>*/}
+                {/*{imgBase64 && imgBase.map((item:any)=>(*/}
+                {/*    console.log(item,"INDEX")*/}
+                {/*    // <li key={item.id}>{item.url}</li>*/}
+                {/*))*/}
+                {/*}*/}
+                {/*</ul>*/}
+                {/*{imgBase64 && imgBase.map((item:any)=>(*/}
+                {/*    <div key={item.id}>*/}
+                {/*    <img src={item.url} key={item.id} height={200} width={200}/>*/}
+                {/*    <button onClick={()=>removeImg(item.id)}>삭제</button>*/}
+                {/*    </div>*/}
+                {/*    ))*/}
+                {/*}*/}
           </>
 
       // <div
